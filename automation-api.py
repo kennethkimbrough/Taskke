@@ -61,3 +61,19 @@ def update_task_status():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# automation_api.py
+from email_notifier import send_email_notification
+
+# ...
+
+@app.route('/assign_tasks', methods=['POST'])
+def assign_tasks():
+    # ...
+    for task in tasks:
+        # Assign the task to the user
+        tasks_collection.update_one({'_id': task['_id']}, {'$set': {'assigned_to': lowest_workload_user}})
+        # Send an email notification to the user
+        send_email_notification(db['users'].find_one({'_id': lowest_workload_user}), task)
+    # ...
+
