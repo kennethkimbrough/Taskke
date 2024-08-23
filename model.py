@@ -2,6 +2,9 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from django.db import models
+from django.db import models
+from django.utils import timezone
 
 Base = declarative_base()
 
@@ -115,3 +118,59 @@ with open('project_taskke.txt', 'w') as f:
     f.write(f"Project: {project.name}\n")
     for task in project.tasks:
         f.write(f"Task: {task.name}, Duration: {task.duration} days, Dependencies: {[t.name for t in task.dependencies]}\n")
+
+class Task(models.Model):
+    # ... existing fields ...
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+
+    # Add the priority field
+    priority = models.IntegerField(default=1)  # Add a priority field with default value 1
+
+    def __str__(self):
+        return self.name
+
+# Define the status choices for the Task model
+STATUS_CHOICES = [
+    ('open', 'Open'),
+    ('in_progress', 'In Progress'),
+    ('completed', 'Completed'),
+    ('cancelled', 'Cancelled'),
+]
+
+# Define the priority choices for the Task model
+PRIORITY_CHOICES = [
+    (1, 'Low'),
+    (2, 'Medium'),
+    (3, 'High'),
+    (4, 'Critical'),
+]
+
+class Task(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    priority = models.IntegerField(default=1, choices=PRIORITY_CHOICES)
+    due_date = models.DateField(null=True, blank=True)
+    assigned_to = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def is_overdue(self):
+        if self.due_date and self.due_date < timezone.now().date():
+            return True
+        return False
+
+    def is_completed(self):
+        return self.status == 'completed'
+
+    def is_assigned(self):
+        return self.assigned_to is not None
+
+
