@@ -14,3 +14,17 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
+//NLU
+const db = new Database();
+
+app.post('/chat', (req, res) => {
+  const input = req.body.message;
+  const python = new pythonShell('nlu.py');
+
+  python.send(input);
+  python.on('message', (response) => {
+    // Save the conversation to the database
+    db.saveConversation(req.body.userId, input, response);
+    res.json({ response: response });
+  });
+});
