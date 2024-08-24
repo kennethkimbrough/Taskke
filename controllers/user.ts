@@ -25,3 +25,26 @@ userSchema.pre('save', async function (next) {
 const User: Model<User> = mongoose.model('User', userSchema);
 
 export default User;
+
+// entities/User.ts
+import { Entity, Column, BeforeInsert } from 'typeorm';
+
+@Entity()
+export class User {
+  @Column()
+  id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+}
