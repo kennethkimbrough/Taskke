@@ -26,6 +26,10 @@ Taskke provides a simple and intuitive interface for managing tasks, allowing us
 
 Taskke offers an intuitive interface for managing your tasks:
 
+
+![index](https://github.com/user-attachments/assets/a26903d5-18fa-4142-b8cd-60f4973cbfcf)
+
+
 ### Creating Tasks
 1. Click the "+" button in the top right corner
 2. Enter the task title and description
